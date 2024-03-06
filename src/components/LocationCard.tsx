@@ -1,21 +1,19 @@
 import { CardProps } from "@yext/search-ui-react";
-import { BsClock, BsGlobe, BsPin } from "react-icons/bs";
-import { CiPhone } from "react-icons/ci";
+import { BsGlobe } from "react-icons/bs";
+import { FaLocationDot, FaPhone } from "react-icons/fa6";
+import { IoTime } from "react-icons/io5";
 import { LiaDirectionsSolid } from "react-icons/lia";
 import Location from "../types/locations";
-import HoursText from "./HoursText";
 import AboutUs from "./AboutUs";
+import HoursText from "./HoursText";
 
 const LocationCard = ({ result }: CardProps<Location>) => {
-
-
   const { name } = result;
   const {
     description,
     slug,
     landingPageUrl,
     address,
-    id,
     hours,
     timezone,
     mainPhone,
@@ -30,10 +28,7 @@ const LocationCard = ({ result }: CardProps<Location>) => {
   };
 
   return (
-    <div
-
-      className={`flex justify-between border-y p-4 hover:cursor-pointer  `}
-    >
+    <div className={`flex justify-between border-y p-4 hover:cursor-pointer  `}>
       <div className="flex flex-col ">
         <div className="flex w-full  text-sm">
           <div className="flex flex-col justify-between gap-2 ">
@@ -43,9 +38,9 @@ const LocationCard = ({ result }: CardProps<Location>) => {
             >
               {name}
             </a>
-            <div className="flex items-center gap-2">
-              <div>
-                <BsClock />
+            <div className="flex items-center gap-3">
+              <div className="text-gray-600">
+                <IoTime />
               </div>
               <div>
                 {hours ? (
@@ -57,7 +52,7 @@ const LocationCard = ({ result }: CardProps<Location>) => {
             </div>
             <div className="flex items-center gap-2 text-gray-600">
               <div>
-                <CiPhone />
+                <FaPhone />
               </div>
               <div>
                 {mainPhone &&
@@ -69,7 +64,7 @@ const LocationCard = ({ result }: CardProps<Location>) => {
             </div>
             <div className="flex items-base gap-2 text-gray-600 ">
               <div>
-                <BsPin className="mt-2" />
+                <FaLocationDot className="mt-2" />
               </div>
               <div className="flex flex-col ">
                 <div>{address?.line1}</div>
@@ -82,7 +77,11 @@ const LocationCard = ({ result }: CardProps<Location>) => {
         </div>
         <div className="flex mt-2">
           <div className="flex flex-col justify-between gap-4">
-            {description && <div className="text-sm"><AboutUs description={description} /></div>}
+            {description && (
+              <div className="text-sm">
+                <AboutUs description={description} />
+              </div>
+            )}
             <div className="flex gap-4  items-center justify-between w-full">
               <div className="m-auto flex flex-col gap-6">
                 <a

@@ -21,14 +21,13 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { IoIosClose } from "react-icons/io";
- import Loader from "./Loader";
+import Loader from "./Loader";
 import LocationCard from "./LocationCard";
 import MapPin from "./MapPin";
- export interface Location {
+export interface Location {
   yextDisplayCoordinate?: Coordinate;
 }
 
- 
 type verticalKey = {
   verticalKey: string;
 };
@@ -71,92 +70,90 @@ const Locator = ({ verticalKey }: verticalKey) => {
 
   return (
     <>
-      <SearchBar placeholder="Search our Events" />
+      <SearchBar placeholder="Search locations" />
 
       {isLoading ? (
         <Loader />
       ) : (
-           <div className="flex flex-row">
+        <div className="flex flex-row">
+          <div
+            className="flex flex-col w-2/5 p-4 overflow-scroll relative"
+            style={{ height: "95vh" }}
+          >
             <div
-              className="flex flex-col w-2/5 p-4 overflow-scroll relative"
-              style={{ height: "95vh" }}
+              className="hover:cursor-pointer px-4 py-1 text-sm bg-[#027da5] text-white w-fit"
+              onClick={(e) => setShowFacets(!showFacets)}
             >
-              <div
-                className="hover:cursor-pointer px-4 py-1 text-sm bg-[#027da5] text-white w-fit"
-                onClick={(e) => setShowFacets(!showFacets)}
-              >
-                Facets & Filters
-              </div>
-              {showFacets ? (
-                <div className="absolute inset-0 bg-white h-[95vh]">
-                  <IoIosClose
+              Facets & Filters
+            </div>
+            {showFacets ? (
+              <div className="absolute inset-0 bg-white h-[95vh]">
+                <IoIosClose
+                  onClick={(e) => setShowFacets(false)}
+                  className="ml-auto h-8 w-8 mr-4 hover:cursor-pointer hover:border"
+                />
+                <Facets
+                  customCssClasses={{ facetsContainer: "mr-10" }}
+                  searchOnChange={true}
+                />
+                <div className="flex flex-row gap-4 mb-8">
+                  <div
+                    className="hover:cursor-pointer px-4 py-1 mt-4 bg-[#027da5] text-white w-fit"
+                    onClick={(e) => setShowFacets(!showFacets)}
+                  >
+                    Apply
+                  </div>
+                  <div
+                    className="hover:cursor-pointer px-4 py-1 mt-4 text-[#027da5] w-fit hover:underline"
                     onClick={(e) => setShowFacets(false)}
-                    className="ml-auto h-8 w-8 mr-4 hover:cursor-pointer hover:border"
-                  />
-                  <Facets
-                    customCssClasses={{ facetsContainer: "mr-10" }}
-                    searchOnChange={true}
-                  />
-                  <div className="flex flex-row gap-4 mb-8">
-                    <div
-                      className="hover:cursor-pointer px-4 py-1 mt-4 bg-[#027da5] text-white w-fit"
-                      onClick={(e) => setShowFacets(!showFacets)}
-                    >
-                      Apply
-                    </div>
-                    <div
-                      className="hover:cursor-pointer px-4 py-1 mt-4 text-[#027da5] w-fit hover:underline"
-                      onClick={(e) => setShowFacets(false)}
-                    >
-                      Cancel
-                    </div>
+                  >
+                    Cancel
                   </div>
                 </div>
-              ) : (
-                <>
-                  <div>
-                    <ResultsCount />
-                    <AppliedFilters />
-                    <VerticalResults
-                      CardComponent={LocationCard}
+              </div>
+            ) : (
+              <>
+                <div>
+                  <ResultsCount />
+                  <AppliedFilters />
+                  <VerticalResults
+                    CardComponent={LocationCard}
+                    customCssClasses={{
+                      verticalResultsContainer: "flex flex-col gap-4",
+                    }}
+                  />
+                  <div className="mt-4">
+                    <Pagination />
+                    <Geolocation
                       customCssClasses={{
-                        verticalResultsContainer: "flex flex-col gap-4",
+                        iconContainer: "none",
+                        geolocationContainer: "flex flex-col lg:flex-col",
                       }}
                     />
-                    <div className="mt-4">
-                      <Pagination />
-                      <Geolocation
-                        customCssClasses={{
-                          iconContainer: "none",
-                          geolocationContainer: "flex flex-col lg:flex-col",
-                        }}
-                      />
-                    </div>
                   </div>
-                </>
-              )}
-            </div>
-            <div className=" w-3/5 h-screen">
-              <MapboxMap
-                mapboxOptions={{
-                  zoom: 20,
-                }}
-                mapboxAccessToken={
-                  import.meta.env.YEXT_PUBLIC_MAP_API_KEY || ""
-                }
-                PinComponent={(props) => (
-                  <MapPin
-                    {...props}
-                    hoveredLocationId={hoveredLocationId}
-                    setHoveredLocationId={setHoveredLocationId}
-                    clicked={clicked}
-                    setClicked={setClicked}
-                  />
-                )}
-              />
-            </div>
+                </div>
+              </>
+            )}
           </div>
-       )}
+          <div className=" w-3/5 h-screen">
+            <MapboxMap
+              mapboxOptions={{
+                zoom: 20,
+              }}
+              mapboxAccessToken={import.meta.env.YEXT_PUBLIC_MAP_API_KEY || ""}
+              PinComponent={(props) => (
+                <MapPin
+                  {...props}
+                  hoveredLocationId={hoveredLocationId}
+                  setHoveredLocationId={setHoveredLocationId}
+                  clicked={clicked}
+                  setClicked={setClicked}
+                />
+              )}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 };
