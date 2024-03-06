@@ -1,3 +1,4 @@
+import { Map, MapboxMaps } from "@yext/pages-components";
 import {
   Matcher,
   SelectableStaticFilter,
@@ -9,7 +10,6 @@ import {
   Coordinate,
   Facets,
   Geolocation,
-  MapboxMap,
   OnDragHandler,
   Pagination,
   ResultsCount,
@@ -21,9 +21,10 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { IoIosClose } from "react-icons/io";
+import CustomMarker from "./CustomMarker";
 import Loader from "./Loader";
 import LocationCard from "./LocationCard";
-import MapPin from "./MapPin";
+
 export interface Location {
   yextDisplayCoordinate?: Coordinate;
 }
@@ -38,6 +39,7 @@ const Locator = ({ verticalKey }: verticalKey) => {
   const filters = useSearchState((state) => state.filters.static);
   const [isLoading, setIsLoading] = useState(true);
   const [showFacets, setShowFacets] = useState(false);
+  const results = useSearchState((state) => state.vertical.results) || [];
   useEffect(() => {
     searchActions.setVertical(verticalKey);
     searchActions.executeVerticalQuery().then(() => setIsLoading(false));
@@ -136,21 +138,30 @@ const Locator = ({ verticalKey }: verticalKey) => {
             )}
           </div>
           <div className=" w-3/5 h-screen">
-            <MapboxMap
-              mapboxOptions={{
-                zoom: 20,
-              }}
-              mapboxAccessToken={import.meta.env.YEXT_PUBLIC_MAP_API_KEY || ""}
-              PinComponent={(props) => (
-                <MapPin
-                  {...props}
-                  hoveredLocationId={hoveredLocationId}
-                  setHoveredLocationId={setHoveredLocationId}
-                  clicked={clicked}
-                  setClicked={setClicked}
-                />
-              )}
-            />
+            {results.length >= 1 && (
+              <Map
+                provider={MapboxMaps}
+                bounds={results.map(
+                  (data: any) => data.rawData.yextDisplayCoordinate
+                )}
+                apiKey={YEXT_PUBLIC_MAP_API_KEY}
+                defaultZoom={15}
+                padding={{ top: 100, bottom: 200, left: 50, right: 50 }}
+                className="h-full"
+              >
+                {results.map((data: any, index) => {
+                  const { yextDisplayCoordinate, id } = data.rawData;
+                  return (
+                    <CustomMarker
+                      key={index}
+                      coordinate={yextDisplayCoordinate}
+                      id={id}
+                      index={index + 1}
+                    />
+                  );
+                })}
+              </Map>
+            )}
           </div>
         </div>
       )}
