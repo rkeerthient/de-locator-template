@@ -67,7 +67,7 @@ const HoursText = ({ hours, timezone }: HoursTextProps) => {
       };
     else
       return {
-        status: "Closed",
+        status: "Closed Now",
         text: `Opens ${getTomorrow} at ${closeOrOpenTime(
           hours[currentDay.toLowerCase()].openIntervals[0].start
         )}`,
@@ -124,10 +124,10 @@ const HoursText = ({ hours, timezone }: HoursTextProps) => {
               : res.status.toLowerCase() === "closed"
                 ? "Closed  - "
                 : res.status.toLowerCase() === "closed perm"
-                  ? "Closed"
+                  ? "Permanently Closed"
                   : ""}
           </p>
-          {res.status !== "Closed perm" && <p className="">{res.text}</p>}
+          {res.status !== "Closed perm" && <p className="">{res.text} perm</p>}
         </div>
       </div>
     </div>

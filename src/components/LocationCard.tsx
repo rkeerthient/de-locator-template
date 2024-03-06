@@ -4,11 +4,10 @@ import { CiPhone } from "react-icons/ci";
 import { LiaDirectionsSolid } from "react-icons/lia";
 import Location from "../types/locations";
 import HoursText from "./HoursText";
-import { useMapContext } from "./Locator";
+import AboutUs from "./AboutUs";
 
 const LocationCard = ({ result }: CardProps<Location>) => {
-  const { hoveredLocationId, setHoveredLocationId, setClicked } =
-    useMapContext();
+
 
   const { name } = result;
   const {
@@ -32,23 +31,15 @@ const LocationCard = ({ result }: CardProps<Location>) => {
 
   return (
     <div
-      onMouseEnter={() => {
-        setHoveredLocationId(id);
-      }}
-      onMouseLeave={() => {
-        setHoveredLocationId("");
-      }}
-      onClick={() => setClicked(id)}
-      className={`flex justify-between border-y p-4 hover:cursor-pointer  ${
-        hoveredLocationId === id ? "bg-gray-200" : ""
-      }`}
+
+      className={`flex justify-between border-y p-4 hover:cursor-pointer  `}
     >
       <div className="flex flex-col ">
-        <div className="flex w-full">
-          <div className="flex flex-col justify-between gap-4 ">
+        <div className="flex w-full  text-sm">
+          <div className="flex flex-col justify-between gap-2 ">
             <a
               href={landingPageUrl}
-              className="text-lg text-[#348daf] flex gap-4 items-center hover:underline"
+              className="text-base font-bold text-[#348daf] flex gap-4 items-center hover:underline"
             >
               {name}
             </a>
@@ -60,11 +51,11 @@ const LocationCard = ({ result }: CardProps<Location>) => {
                 {hours ? (
                   <HoursText timezone={timezone} hours={hours} />
                 ) : (
-                  <>Fill in your hours</>
+                  <>Add hours</>
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-gray-600">
               <div>
                 <CiPhone />
               </div>
@@ -76,11 +67,11 @@ const LocationCard = ({ result }: CardProps<Location>) => {
                     .replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3")}
               </div>
             </div>
-            <div className="flex items-base gap-2">
+            <div className="flex items-base gap-2 text-gray-600 ">
               <div>
                 <BsPin className="mt-2" />
               </div>
-              <div className="flex flex-col text-gray-600 text-sm">
+              <div className="flex flex-col ">
                 <div>{address?.line1}</div>
                 <div>
                   {address?.city}, {address?.region} {address?.postalCode}
@@ -90,8 +81,8 @@ const LocationCard = ({ result }: CardProps<Location>) => {
           </div>
         </div>
         <div className="flex mt-2">
-          <div className="flex flex-col justify-between gap-4  ">
-            <div>{description}</div>
+          <div className="flex flex-col justify-between gap-4">
+            {description && <div className="text-sm"><AboutUs description={description} /></div>}
             <div className="flex gap-4  items-center justify-between w-full">
               <div className="m-auto flex flex-col gap-6">
                 <a

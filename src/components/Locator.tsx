@@ -21,25 +21,14 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { IoIosClose } from "react-icons/io";
-import { createCtx } from "../common/createContext";
-import Loader from "./Loader";
+ import Loader from "./Loader";
 import LocationCard from "./LocationCard";
 import MapPin from "./MapPin";
-import { LocationsProvider } from "../common/LocationsContext";
-export interface Location {
+ export interface Location {
   yextDisplayCoordinate?: Coordinate;
 }
 
-type MapContextType = {
-  hoveredLocationId: string;
-  setHoveredLocationId: (value: string) => void;
-  clicked: string;
-  setClicked: (value: string) => void;
-};
-
-export const [useMapContext, MapContextProvider] = createCtx<MapContextType>(
-  "Attempted to call useMapContext outside of MapContextProvider"
-);
+ 
 type verticalKey = {
   verticalKey: string;
 };
@@ -87,8 +76,7 @@ const Locator = ({ verticalKey }: verticalKey) => {
       {isLoading ? (
         <Loader />
       ) : (
-        <LocationsProvider>
-          <div className="flex flex-row">
+           <div className="flex flex-row">
             <div
               className="flex flex-col w-2/5 p-4 overflow-scroll relative"
               style={{ height: "95vh" }}
@@ -168,8 +156,7 @@ const Locator = ({ verticalKey }: verticalKey) => {
               />
             </div>
           </div>
-        </LocationsProvider>
-      )}
+       )}
     </>
   );
 };

@@ -44,7 +44,7 @@ const Search: Template<TemplateRenderProps> = ({ document }) => {
     <>
       <PageLayout>
         <div className="centered-container">
-          <Locator verticalKey={"locations"}></Locator>
+          <Locator verticalKey={"answersLocations"}></Locator>
         </div>
       </PageLayout>
     </>
