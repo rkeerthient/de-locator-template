@@ -1,3 +1,4 @@
+import React, { useRef, useEffect } from "react";
 import { CardProps } from "@yext/search-ui-react";
 import { BsGlobe } from "react-icons/bs";
 import { FaLocationDot, FaPhone } from "react-icons/fa6";
@@ -6,8 +7,10 @@ import { LiaDirectionsSolid } from "react-icons/lia";
 import Location from "../types/locations";
 import AboutUs from "./AboutUs";
 import HoursText from "./HoursText";
+import { useLocationsContext } from "../context/LocationContext";
 
 const LocationCard = ({ result }: CardProps<Location>) => {
+  const locationRef = useRef<HTMLDivElement | null>(null);
   const { name } = result;
   const {
     description,
@@ -17,8 +20,14 @@ const LocationCard = ({ result }: CardProps<Location>) => {
     hours,
     timezone,
     mainPhone,
+    id,
   } = result.rawData;
-
+  const {
+    hoveredLocationId,
+    setHoveredLocationId,
+    selectedLocationId,
+    setSelectedLocationId,
+  } = useLocationsContext();
   const getDirectionsUrl = (addr?: any) => {
     const region = addr.region ? ` ${addr.region}` : ``;
     const rawQuery = `${addr.line1},${addr.city},${region} ${addr.postalCode} ${addr.countryCode}`;
@@ -27,8 +36,17 @@ const LocationCard = ({ result }: CardProps<Location>) => {
     return url;
   };
 
+  useEffect(() => {
+    if (selectedLocationId === id && locationRef.current) {
+      locationRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [selectedLocationId, id]);
+
   return (
-    <div className={`flex justify-between border-y p-4 hover:cursor-pointer  `}>
+    <div
+      ref={locationRef}
+      className={`flex justify-between border-y p-4 hover:cursor-pointer  `}
+    >
       <div className="flex flex-col ">
         <div className="flex w-full  text-sm">
           <div className="flex flex-col justify-between gap-2 ">
@@ -36,7 +54,7 @@ const LocationCard = ({ result }: CardProps<Location>) => {
               href={landingPageUrl}
               className="text-base font-bold text-[#348daf] flex gap-4 items-center hover:underline"
             >
-              {name}
+              {id} {name}
             </a>
             <div className="flex items-center gap-3">
               <div className="text-gray-600">

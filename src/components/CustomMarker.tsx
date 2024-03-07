@@ -1,5 +1,7 @@
-import { Marker, useMapContext } from "@yext/pages-components";
+import { Marker } from "@yext/pages-components";
 import type { Coordinate } from "@yext/types";
+import { useEffect } from "react";
+import { useLocationsContext } from "../context/LocationContext";
 
 type CustomMarkerProps = {
   coordinate: Coordinate;
@@ -9,12 +11,25 @@ type CustomMarkerProps = {
 
 const CustomMarker = (props: CustomMarkerProps) => {
   const { coordinate, id, index } = props;
-
-  const map = useMapContext();
+  const {
+    hoveredLocationId,
+    setHoveredLocationId,
+    selectedLocationId,
+    setSelectedLocationId,
+  } = useLocationsContext();
 
   return (
-    <Marker coordinate={coordinate} id={id}>
-      <MapPin index={index} height={57} width={43} />
+    <Marker
+      onClick={setSelectedLocationId}
+      coordinate={coordinate}
+      id={id}
+      onHover={(hovered, id) => setHoveredLocationId(hovered ? id : "")}
+    >
+      <MapPin
+        index={index}
+        height={hoveredLocationId === id ? 57 : 42}
+        width={hoveredLocationId === id ? 43 : 35}
+      />
     </Marker>
   );
 };

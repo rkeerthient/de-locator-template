@@ -24,6 +24,7 @@ import { IoIosClose } from "react-icons/io";
 import CustomMarker from "./CustomMarker";
 import Loader from "./Loader";
 import LocationCard from "./LocationCard";
+import { LocationProvider } from "../context/LocationContext";
 
 export interface Location {
   yextDisplayCoordinate?: Coordinate;
@@ -33,8 +34,6 @@ type verticalKey = {
   verticalKey: string;
 };
 const Locator = ({ verticalKey }: verticalKey) => {
-  const [hoveredLocationId, setHoveredLocationId] = useState("");
-  const [clicked, setClicked] = useState("");
   const searchActions = useSearchActions();
   const filters = useSearchState((state) => state.filters.static);
   const [isLoading, setIsLoading] = useState(true);
@@ -77,93 +76,95 @@ const Locator = ({ verticalKey }: verticalKey) => {
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="flex flex-row">
-          <div
-            className="flex flex-col w-2/5 p-4 overflow-scroll relative"
-            style={{ height: "95vh" }}
-          >
+        <LocationProvider>
+          <div className="flex flex-row">
             <div
-              className="hover:cursor-pointer px-4 py-1 text-sm bg-[#027da5] text-white w-fit"
-              onClick={(e) => setShowFacets(!showFacets)}
+              className="flex flex-col w-2/5 p-4 overflow-scroll relative"
+              style={{ height: "95vh" }}
             >
-              Facets & Filters
-            </div>
-            {showFacets ? (
-              <div className="absolute inset-0 bg-white h-[95vh]">
-                <IoIosClose
-                  onClick={(e) => setShowFacets(false)}
-                  className="ml-auto h-8 w-8 mr-4 hover:cursor-pointer hover:border"
-                />
-                <Facets
-                  customCssClasses={{ facetsContainer: "mr-10" }}
-                  searchOnChange={true}
-                />
-                <div className="flex flex-row gap-4 mb-8">
-                  <div
-                    className="hover:cursor-pointer px-4 py-1 mt-4 bg-[#027da5] text-white w-fit"
-                    onClick={(e) => setShowFacets(!showFacets)}
-                  >
-                    Apply
-                  </div>
-                  <div
-                    className="hover:cursor-pointer px-4 py-1 mt-4 text-[#027da5] w-fit hover:underline"
+              <div
+                className="hover:cursor-pointer px-4 py-1 text-sm bg-[#027da5] text-white w-fit"
+                onClick={(e) => setShowFacets(!showFacets)}
+              >
+                Facets & Filters
+              </div>
+              {showFacets ? (
+                <div className="absolute inset-0 bg-white h-[95vh]">
+                  <IoIosClose
                     onClick={(e) => setShowFacets(false)}
-                  >
-                    Cancel
+                    className="ml-auto h-8 w-8 mr-4 hover:cursor-pointer hover:border"
+                  />
+                  <Facets
+                    customCssClasses={{ facetsContainer: "mr-10" }}
+                    searchOnChange={true}
+                  />
+                  <div className="flex flex-row gap-4 mb-8">
+                    <div
+                      className="hover:cursor-pointer px-4 py-1 mt-4 bg-[#027da5] text-white w-fit"
+                      onClick={(e) => setShowFacets(!showFacets)}
+                    >
+                      Apply
+                    </div>
+                    <div
+                      className="hover:cursor-pointer px-4 py-1 mt-4 text-[#027da5] w-fit hover:underline"
+                      onClick={(e) => setShowFacets(false)}
+                    >
+                      Cancel
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <>
-                <div>
-                  <ResultsCount />
-                  <AppliedFilters />
-                  <VerticalResults
-                    CardComponent={LocationCard}
-                    customCssClasses={{
-                      verticalResultsContainer: "flex flex-col gap-4",
-                    }}
-                  />
-                  <div className="mt-4">
-                    <Pagination />
-                    <Geolocation
+              ) : (
+                <>
+                  <div>
+                    <ResultsCount />
+                    <AppliedFilters />
+                    <VerticalResults
+                      CardComponent={LocationCard}
                       customCssClasses={{
-                        iconContainer: "none",
-                        geolocationContainer: "flex flex-col lg:flex-col",
+                        verticalResultsContainer: "flex flex-col gap-4",
                       }}
                     />
+                    <div className="mt-4">
+                      <Pagination />
+                      <Geolocation
+                        customCssClasses={{
+                          iconContainer: "none",
+                          geolocationContainer: "flex flex-col lg:flex-col",
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
-              </>
-            )}
+                </>
+              )}
+            </div>
+            <div className=" w-3/5 h-screen">
+              {results.length >= 1 && (
+                <Map
+                  provider={MapboxMaps}
+                  bounds={results.map(
+                    (data: any) => data.rawData.yextDisplayCoordinate
+                  )}
+                  apiKey={YEXT_PUBLIC_MAP_API_KEY}
+                  defaultZoom={15}
+                  padding={{ top: 100, bottom: 200, left: 50, right: 50 }}
+                  className="h-full"
+                >
+                  {results.map((data: any, index) => {
+                    const { yextDisplayCoordinate, id } = data.rawData;
+                    return (
+                      <CustomMarker
+                        key={index}
+                        coordinate={yextDisplayCoordinate}
+                        id={id}
+                        index={index + 1}
+                      />
+                    );
+                  })}
+                </Map>
+              )}
+            </div>
           </div>
-          <div className=" w-3/5 h-screen">
-            {results.length >= 1 && (
-              <Map
-                provider={MapboxMaps}
-                bounds={results.map(
-                  (data: any) => data.rawData.yextDisplayCoordinate
-                )}
-                apiKey={YEXT_PUBLIC_MAP_API_KEY}
-                defaultZoom={15}
-                padding={{ top: 100, bottom: 200, left: 50, right: 50 }}
-                className="h-full"
-              >
-                {results.map((data: any, index) => {
-                  const { yextDisplayCoordinate, id } = data.rawData;
-                  return (
-                    <CustomMarker
-                      key={index}
-                      coordinate={yextDisplayCoordinate}
-                      id={id}
-                      index={index + 1}
-                    />
-                  );
-                })}
-              </Map>
-            )}
-          </div>
-        </div>
+        </LocationProvider>
       )}
     </>
   );
